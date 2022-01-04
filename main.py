@@ -76,6 +76,9 @@ def import_excel(new_table, old_table):
                      '选项C': new_table.cell_value(new_row, 9),
                      '选项D': new_table.cell_value(new_row, 10), '答案': new_table.cell_value(new_row, 5)}
 
+        # 新文件题型
+        new_question_type = new_table.cell_value(new_row, 0)
+
         # 库中实体索引
         old_index = 0
 
@@ -90,13 +93,19 @@ def import_excel(new_table, old_table):
                          '选项C': old_table.cell_value(old_row, 9),
                          '选项D': old_table.cell_value(old_row, 10), '答案': old_table.cell_value(old_row, 5)}
 
-            # 取5个匹配要素的平均值（题目和4个选项）
-            diff_rate1 = compute_match_rate(new_array.get("题目"), old_array.get("题目"))
-            diff_rate2 = compute_match_rate(new_array.get("选项A"), old_array.get("选项A"))
-            diff_rate3 = compute_match_rate(new_array.get("选项B"), old_array.get("选项B"))
-            diff_rate4 = compute_match_rate(new_array.get("选项C"), old_array.get("选项C"))
-            diff_rate5 = compute_match_rate(new_array.get("选项D"), old_array.get("选项D"))
-            diff_rate = (diff_rate1 + diff_rate2 + diff_rate3 + diff_rate4 + diff_rate5) / 5
+            # 匹配率
+            diff_rate = 0.0
+
+            if new_question_type == u"判断":
+                diff_rate = compute_match_rate(new_array.get("题目"), old_array.get("题目"))
+            else:
+                # 取5个匹配要素的平均值（题目和4个选项）
+                diff_rate1 = compute_match_rate(new_array.get("题目"), old_array.get("题目"))
+                diff_rate2 = compute_match_rate(new_array.get("选项A"), old_array.get("选项A"))
+                diff_rate3 = compute_match_rate(new_array.get("选项B"), old_array.get("选项B"))
+                diff_rate4 = compute_match_rate(new_array.get("选项C"), old_array.get("选项C"))
+                diff_rate5 = compute_match_rate(new_array.get("选项D"), old_array.get("选项D"))
+                diff_rate = (diff_rate1 + diff_rate2 + diff_rate3 + diff_rate4 + diff_rate5) / 5
 
             if diff_rate > max_match_rate:
                 max_match_rate = diff_rate
